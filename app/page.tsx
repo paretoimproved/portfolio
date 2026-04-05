@@ -58,6 +58,14 @@ const achievements = [
     ],
   },
   {
+    group: "Product Strategy & Delivery",
+    items: [
+      "Identified recurring institutional client complaints around email-to-case communication. Led roadmap to build a logged-in support portal within the Coinbase product: backend messaging channel, extensible in-app notification system, directly integrated with ops case management workflows. Solved the authentication/trust layer for clients investing millions on the platform.",
+      "Extended the support channel to Telegram via a gRPC backend integration. Full message parity with the web portal. Same trust layer, different surface, meeting clients where they communicate.",
+      "8 product launches across futures, derivatives, and international expansion",
+    ],
+  },
+  {
     group: "Agentic AI & Automation",
     items: [
       "Built an agentic AI pipeline that scans production exceptions, categorizes errors, creates tickets, and routes to on-call engineers. Patterns adopted across the company.",
@@ -109,7 +117,10 @@ export default function Home() {
         <p className="text-zinc-400 text-lg leading-relaxed max-w-2xl">
           I lead teams that build systems transforming how organizations operate.
           Engineering Manager at Coinbase, managing 9 engineers across two sub-teams
-          delivering agentic AI systems, enterprise platforms, and tools that scale.
+          delivering agentic AI systems, client-facing products, and enterprise platforms.
+          From identifying a broken institutional support experience to shipping a
+          logged-in portal and messaging system that serves clients investing millions
+          on our platform.
         </p>
         <div className="flex gap-4 mt-8">
           <a href="https://github.com/paretoimproved" target="_blank"
