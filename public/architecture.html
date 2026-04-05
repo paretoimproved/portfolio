@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Homelab Architecture</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<style>
+  body { background: #09090b; }
+  .mermaid { display: flex; justify-content: center; }
+  .mermaid svg { max-width: 100%; height: auto; }
+</style>
+</head>
+<body class="text-zinc-200 p-4 md:p-8">
+
+<div class="max-w-6xl mx-auto">
+  <h1 class="text-2xl font-bold text-white mb-1">Homelab Architecture</h1>
+  <p class="text-zinc-500 text-sm mb-6">Proxmox / Beelink N95 — Last updated 2026-03-22</p>
+
+  <!-- Main System Diagram -->
+  <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-4 mb-6">
+    <h2 class="text-zinc-400 text-xs uppercase tracking-wider font-semibold mb-4">System Overview</h2>
+    <div class="mermaid">
+flowchart TB
+    subgraph INTERNET["☁️ Internet"]
+        TG_API["Telegram API"]
+        GOOGLE["Google APIs<br/><small>Calendar · Gmail · OAuth</small>"]
+        NEWS["News Sources<br/><small>HN · Lobsters · Techmeme</small>"]
+        WEATHER["wttr.in"]
+        GITHUB["GitHub API"]
+    end
+
+    subgraph PVE["🖥️ Proxmox Host — Beelink N95 (Intel N95)"]
+        direction TB
+
+        subgraph CT104["CT 104 — claude-admin (192.168.1.234)"]
+            direction TB
+            CLAUDE["Claude Code<br/>+ Telegram Plugin"]
+            API["API Server<br/>:3001"]
+            COLLECT["collect_data.py<br/><small>Multi-source aggregator</small>"]
+            RENDER["generate_page.py<br/><small>HTML renderer</small>"]
+            STATIC["Static Server<br/>:3000"]
+            CRON104["Cron Jobs<br/><small>7am email summary</small>"]
+            WHISPER["faster-whisper<br/><small>Voice transcription</small>"]
+            HOOKS["Hooks<br/><small>notify-telegram.sh</small>"]
+
+            CLAUDE -->|"orchestrates"| API
+            API -->|"/collect/all"| COLLECT
+            API -->|"/render"| RENDER
+            COLLECT -->|"data.json"| RENDER
+            RENDER -->|"HTML"| STATIC
+            CRON104 -->|"triggers"| COLLECT
+            CLAUDE -->|"voice msgs"| WHISPER
+            CLAUDE -->|"permission prompts"| HOOKS
+        end
+
+        subgraph CT105["CT 105 — claude-calendar (192.168.1.245)"]
+            CALBOT["Calendar Bot<br/><small>Daily · Weekly · Monthly</small>"]
+        end
+
+        subgraph CT106["CT 106 — n8n (192.168.1.207)"]
+            N8N["n8n Workflows<br/>:5678"]
+        end
+
+        subgraph CT100["CT 100 — PiHole (192.168.1.120)"]
+            PIHOLE["PiHole DNS<br/>+ Unbound"]
+        end
+
+        subgraph VM101["VM 101 — HAOS (192.168.1.121)"]
+            HA["Home Assistant<br/>:8123"]
+        end
+    end
+
+    subgraph UDM["🌐 UniFi UDM SE (192.168.1.1)"]
+        UNIFI["Network Controller<br/><small>DHCP · Firewall · VPN</small>"]
+    end
+
+    subgraph PHONE["📱 Brandon's Pixel 9 Pro XL"]
+        TGAPP["Telegram App"]
+        WGAPP["WireGuard VPN"]
+        BRIEFING["Briefing PWA"]
+    end
+
+    %% Data collection flows
+    COLLECT -->|"SSH"| PVE
+    COLLECT -->|"HTTPS"| GOOGLE
+    COLLECT -->|"HTTPS"| NEWS
+    COLLECT -->|"HTTPS"| WEATHER
+    COLLECT -->|"SSH + HTTP"| PIHOLE
+    COLLECT -->|"REST API"| HA
+
+    %% n8n orchestration
+    N8N -->|"HTTP :3001"| API
+    N8N -->|"notification"| TG_API
+
+    %% Telegram flows
+    CLAUDE <-->|"messages"| TG_API
+    HOOKS -->|"alerts"| TG_API
+    CRON104 -->|"summary"| TG_API
+    CALBOT -->|"calendar"| TG_API
+    TG_API <-->|"push"| TGAPP
+
+    %% Calendar bot
+    CALBOT -->|"HTTPS"| GOOGLE
+
+    %% Phone flows
+    BRIEFING -->|"HTTP :3000"| STATIC
+    WGAPP -->|"WireGuard :51820"| UNIFI
+
+    %% Network
+    UNIFI -->|"DHCP/routing"| PVE
+
+    %% MCP connections
+    CLAUDE -->|"MCP"| GITHUB
+
+    %% Styling
+    classDef internet fill:#1e3a5f,stroke:#3b82f6,color:#93c5fd
+    classDef container fill:#1a1a2e,stroke:#6366f1,color:#a5b4fc
+    classDef service fill:#162016,stroke:#22c55e,color:#86efac
+    classDef phone fill:#2d1b2e,stroke:#a855f7,color:#d8b4fe
+    classDef infra fill:#1f1f1f,stroke:#71717a,color:#d4d4d8
+
+    class INTERNET internet
+    class CT104,CT105,CT106,CT100,VM101 container
+    class CLAUDE,API,COLLECT,RENDER,STATIC,CRON104,WHISPER,HOOKS,CALBOT,N8N,PIHOLE,HA service
+    class PHONE phone
+    class UDM,UNIFI infra
+    class TG_API,GOOGLE,NEWS,WEATHER,GITHUB internet
+    class TGAPP,WGAPP,BRIEFING phone
+    </div>
+  </div>
+
+  <!-- Data Flow Diagram -->
+  <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-4 mb-6">
+    <h2 class="text-zinc-400 text-xs uppercase tracking-wider font-semibold mb-4">Daily Briefing Data Flow</h2>
+    <div class="mermaid">
+flowchart LR
+    subgraph TRIGGER["Trigger"]
+        CRON["⏰ 7am Cron"]
+        N8N2["n8n Workflow"]
+        MANUAL["Manual /generate"]
+    end
+
+    subgraph COLLECT2["Collect"]
+        PROX["Proxmox Stats"]
+        CAL["Google Calendar"]
+        MAIL["Gmail Triage"]
+        HN["Hacker News"]
+        LOB["Lobsters"]
+        TM["Techmeme"]
+        GHT["GitHub Trending"]
+        WX["Weather"]
+        PH["PiHole Stats"]
+        HAS["HA State"]
+    end
+
+    subgraph PROCESS["Process"]
+        AGG["Aggregate<br/>data.json"]
+        HTML["Render HTML<br/>Tailwind CSS"]
+    end
+
+    subgraph DELIVER["Deliver"]
+        WEB["HTTP :3000<br/>PWA Dashboard"]
+        TEL["Telegram<br/>Summary Message"]
+    end
+
+    CRON --> AGG
+    N8N2 --> AGG
+    MANUAL --> AGG
+
+    PROX --> AGG
+    CAL --> AGG
+    MAIL --> AGG
+    HN --> AGG
+    LOB --> AGG
+    TM --> AGG
+    GHT --> AGG
+    WX --> AGG
+    PH --> AGG
+    HAS --> AGG
+
+    AGG --> HTML
+    HTML --> WEB
+    AGG --> TEL
+
+    classDef trigger fill:#2d1b2e,stroke:#a855f7,color:#d8b4fe
+    classDef collect fill:#1e3a5f,stroke:#3b82f6,color:#93c5fd
+    classDef process fill:#162016,stroke:#22c55e,color:#86efac
+    classDef deliver fill:#1f1a10,stroke:#f59e0b,color:#fcd34d
+
+    class CRON,N8N2,MANUAL trigger
+    class PROX,CAL,MAIL,HN,LOB,TM,GHT,WX,PH,HAS collect
+    class AGG,HTML process
+    class WEB,TEL deliver
+    </div>
+  </div>
+
+  <!-- Network Map -->
+  <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-4 mb-6">
+    <h2 class="text-zinc-400 text-xs uppercase tracking-wider font-semibold mb-4">Network Map</h2>
+    <div class="mermaid">
+flowchart TB
+    ISP["🌐 Comcast Cable<br/>WAN: 24.22.42.17"]
+
+    subgraph UDM_NET["UniFi UDM SE — 192.168.1.1"]
+        direction LR
+        DEFAULT["Default Network<br/>192.168.1.0/24"]
+        IOT["IoT Network<br/>192.168.2.0/24<br/>VLAN 2"]
+        VPN["Home VPN<br/>192.168.3.0/24<br/>WireGuard :51820"]
+    end
+
+    ISP --> UDM_NET
+
+    subgraph LAN["Default LAN Devices"]
+        CT100N["CT 100 · PiHole<br/>192.168.1.120 ⚡"]
+        CT104N["CT 104 · claude-admin<br/>192.168.1.234 ⚡"]
+        CT105N["CT 105 · calendar<br/>192.168.1.245"]
+        CT106N["CT 106 · n8n<br/>192.168.1.207"]
+        VM101N["VM 101 · HAOS<br/>192.168.1.121"]
+    end
+
+    DEFAULT --> LAN
+    VPN -->|"remote access"| LAN
+
+    PIXEL["📱 Pixel 9 Pro XL<br/>WireGuard Client<br/>192.168.3.6"]
+    PIXEL -->|":51820"| VPN
+
+    classDef static fill:#162016,stroke:#22c55e,color:#86efac
+    classDef dynamic fill:#1a1a2e,stroke:#6366f1,color:#a5b4fc
+    classDef wan fill:#1e3a5f,stroke:#3b82f6,color:#93c5fd
+    classDef vpn fill:#2d1b2e,stroke:#a855f7,color:#d8b4fe
+
+    class CT100N,CT104N static
+    class CT105N,CT106N,VM101N dynamic
+    class ISP wan
+    class PIXEL vpn
+    </div>
+    <p class="text-zinc-600 text-xs mt-2">⚡ = Static IP with DHCP reservation</p>
+  </div>
+
+  <!-- Service Inventory -->
+  <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 mb-6">
+    <h2 class="text-zinc-400 text-xs uppercase tracking-wider font-semibold mb-4">Service Inventory</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <h3 class="text-zinc-300 text-sm font-medium mb-2">CT 104 — claude-admin</h3>
+        <div class="space-y-1 text-xs">
+          <div class="flex justify-between"><span class="text-zinc-400">Claude Code + Telegram</span><span class="text-zinc-600">Interactive admin</span></div>
+          <div class="flex justify-between"><span class="text-zinc-400">API Server</span><span class="text-zinc-600">:3001</span></div>
+          <div class="flex justify-between"><span class="text-zinc-400">Static HTTP</span><span class="text-zinc-600">:3000</span></div>
+          <div class="flex justify-between"><span class="text-zinc-400">faster-whisper</span><span class="text-zinc-600">Voice transcription</span></div>
+          <div class="flex justify-between"><span class="text-zinc-400">Cron: email summary</span><span class="text-zinc-600">7:00 AM PT</span></div>
+        </div>
+      </div>
+      <div>
+        <h3 class="text-zinc-300 text-sm font-medium mb-2">CT 105 — claude-calendar</h3>
+        <div class="space-y-1 text-xs">
+          <div class="flex justify-between"><span class="text-zinc-400">Daily summary</span><span class="text-zinc-600">6:30 AM PT</span></div>
+          <div class="flex justify-between"><span class="text-zinc-400">Weekly overview</span><span class="text-zinc-600">Sun 6:00 PM PT</span></div>
+          <div class="flex justify-between"><span class="text-zinc-400">Monthly overview</span><span class="text-zinc-600">1st @ 9:00 AM PT</span></div>
+        </div>
+      </div>
+      <div>
+        <h3 class="text-zinc-300 text-sm font-medium mb-2">CT 106 — n8n</h3>
+        <div class="space-y-1 text-xs">
+          <div class="flex justify-between"><span class="text-zinc-400">Workflow engine</span><span class="text-zinc-600">:5678</span></div>
+          <div class="flex justify-between"><span class="text-zinc-400">Briefing pipeline</span><span class="text-zinc-600">Orchestrates CT 104 API</span></div>
+        </div>
+      </div>
+      <div>
+        <h3 class="text-zinc-300 text-sm font-medium mb-2">MCP Servers</h3>
+        <div class="space-y-1 text-xs">
+          <div class="flex justify-between"><span class="text-zinc-400">Telegram</span><span class="text-zinc-600">Plugin channel</span></div>
+          <div class="flex justify-between"><span class="text-zinc-400">GitHub</span><span class="text-zinc-600">HTTP</span></div>
+          <div class="flex justify-between"><span class="text-zinc-400">DuckDuckGo</span><span class="text-zinc-600">Search + fetch</span></div>
+          <div class="flex justify-between"><span class="text-zinc-400">Playwright</span><span class="text-zinc-600">Headless browser</span></div>
+          <div class="flex justify-between"><span class="text-zinc-400">UniFi Network</span><span class="text-zinc-600">91 tools (lazy)</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="text-zinc-700 text-xs text-center">Generated by Claude Code on CT 104</p>
+</div>
+
+<script>
+mermaid.initialize({
+  startOnLoad: true,
+  theme: 'dark',
+  themeVariables: {
+    darkMode: true,
+    background: '#18181b',
+    primaryColor: '#4f46e5',
+    primaryTextColor: '#e4e4e7',
+    primaryBorderColor: '#6366f1',
+    lineColor: '#52525b',
+    secondaryColor: '#1e3a5f',
+    tertiaryColor: '#162016',
+    fontFamily: 'ui-monospace, monospace',
+    fontSize: '12px',
+  },
+  flowchart: {
+    useMaxWidth: true,
+    htmlLabels: true,
+    curve: 'basis',
+  },
+});
+</script>
+</body>
+</html>
