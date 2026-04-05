@@ -6,179 +6,173 @@
     <title>Brandon Queener | AI Product Engineer Application</title>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --cream: #FEFCED;
-            --dark: #1d1f27;
-            --warm-brown: #2a2520;
-            --tan: #d4c9b8;
-            --tan-light: #E1D7C2;
-            --text-primary: #1d1f27;
-            --text-secondary: #6b6354;
-            --accent: #F54E00;
-            --accent-soft: #fff0e5;
-            --border: #e5ddd0;
-            --code-bg: #f3efe8;
-        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'IBM Plex Sans', -apple-system, system-ui, sans-serif;
-            background: var(--cream);
-            color: var(--text-primary);
+            background: #FEFCED;
+            color: #1d1f27;
             line-height: 1.6;
         }
-        .container { max-width: 720px; margin: 0 auto; padding: 48px 24px; }
 
-        /* PostHog-style nav bar */
+        /* Top bar */
         .topbar {
-            background: var(--dark);
+            background: #1d1f27;
             color: white;
-            padding: 12px 24px;
+            padding: 10px 24px;
             font-size: 13px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        .topbar a { color: #bbb; text-decoration: none; }
+        .topbar a { color: #999; text-decoration: none; font-size: 13px; }
         .topbar a:hover { color: white; }
 
         /* Hero */
         .hero {
-            background: var(--dark);
+            background: #1d1f27;
             color: white;
-            padding: 48px 24px;
+            padding: 40px 24px 36px;
             text-align: center;
         }
-        .hero h1 {
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-        .hero .subtitle {
-            color: #aaa;
-            font-size: 16px;
-            margin-bottom: 16px;
-        }
+        .hero h1 { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+        .hero .subtitle { color: #999; font-size: 15px; margin-bottom: 16px; }
         .hero .tagline {
-            color: var(--accent);
+            color: #F54E00;
             font-family: 'IBM Plex Mono', monospace;
-            font-size: 14px;
+            font-size: 13px;
             background: rgba(245, 78, 0, 0.1);
             display: inline-block;
-            padding: 6px 16px;
+            padding: 5px 14px;
             border-radius: 4px;
-            border: 1px solid rgba(245, 78, 0, 0.3);
+            border: 1px solid rgba(245, 78, 0, 0.2);
         }
 
-        /* Sections */
-        .section {
-            border: 1.5px solid var(--border);
+        .container { max-width: 680px; margin: 0 auto; padding: 32px 20px; }
+
+        /* Section cards */
+        .card {
+            border: 1.5px solid #e5ddd0;
             border-radius: 8px;
             background: white;
-            padding: 32px;
-            margin-bottom: 24px;
+            padding: 28px;
+            margin-bottom: 20px;
         }
-        .section-label {
+        .card-label {
             font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 1.5px;
-            color: var(--text-secondary);
+            color: #6b6354;
             font-weight: 600;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            margin-bottom: 14px;
         }
-        .section-label::before {
+        .card-label::before {
             content: '';
-            width: 12px;
+            display: inline-block;
+            width: 10px;
             height: 3px;
-            background: var(--accent);
+            background: #F54E00;
             border-radius: 2px;
+            margin-right: 8px;
+            vertical-align: middle;
         }
 
-        /* Cover letter styling */
-        .cover-letter p {
-            margin-bottom: 16px;
-            font-size: 15px;
+        /* Cover letter text */
+        .cover p, .cover .paragraph {
+            margin-bottom: 14px;
+            font-size: 14.5px;
             line-height: 1.7;
-            color: var(--text-primary);
+            color: #1d1f27;
         }
-        .cover-letter strong { font-weight: 600; }
+        .cover .signature { margin-top: 20px; font-weight: 600; }
 
-        /* Resume styling */
-        .resume-content h1, .resume-content h2, .resume-content h3 {
-            color: var(--text-primary) !important;
-        }
-        .resume-content h2 {
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-secondary) !important;
-            border-bottom: 1.5px solid var(--border);
-            padding-bottom: 6px;
-            margin-top: 24px;
-            margin-bottom: 12px;
-        }
-        .resume-content h3 {
-            font-size: 15px;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-        .resume-content p, .resume-content li {
-            font-size: 14px;
-            color: var(--text-primary);
-            line-height: 1.6;
-        }
-        .resume-content ul { padding-left: 0; list-style: none; }
-        .resume-content li::before {
-            content: "→ ";
-            color: var(--accent);
-            font-weight: 600;
-        }
-        .resume-content a { color: var(--accent); text-decoration: none; }
-        .resume-content * {
-            color: var(--text-primary) !important;
+        /* Resume styles — override anything from the generated HTML */
+        .resume, .resume * {
+            color: #1d1f27 !important;
             background: transparent !important;
+            font-family: 'IBM Plex Sans', system-ui, sans-serif !important;
         }
-        .resume-content strong { font-weight: 600; }
-
-        /* Links bar */
-        .links {
+        .resume .section-title, .resume h2 {
+            font-size: 12px !important;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: #6b6354 !important;
+            border-bottom: 1.5px solid #e5ddd0;
+            padding-bottom: 5px;
+            margin: 22px 0 10px 0;
+            font-weight: 600;
+        }
+        .resume .company-title, .resume h3 {
+            font-size: 14px !important;
+            font-weight: 600;
+        }
+        .resume .experience-header {
             display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-top: 24px;
+            justify-content: space-between;
+            align-items: baseline;
         }
-        .links a {
+        .resume .dates { color: #6b6354 !important; font-size: 13px !important; }
+        .resume .role-desc { color: #6b6354 !important; font-size: 13px !important; font-style: italic; }
+        .resume .group-title {
+            font-size: 12px !important;
+            font-weight: 700;
+            color: #1d1f27 !important;
+            margin: 12px 0 6px 0;
+            letter-spacing: 0.5px;
+        }
+        .resume ul { list-style: none; padding: 0; margin: 0 0 10px 0; }
+        .resume li {
+            font-size: 13.5px !important;
+            line-height: 1.6;
+            margin-bottom: 4px;
+            padding-left: 16px;
+            position: relative;
+        }
+        .resume li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #F54E00;
+            font-weight: 600;
+        }
+        .resume p { font-size: 13.5px !important; line-height: 1.6; margin-bottom: 6px; }
+        .resume a { color: #F54E00 !important; text-decoration: none; }
+        .resume .contact { font-size: 13px !important; color: #6b6354 !important; }
+        .resume .name { font-size: 22px !important; font-weight: 700; margin-bottom: 4px; }
+
+        /* Project links */
+        .projects {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        .projects a {
             font-size: 13px;
-            color: var(--accent);
+            color: #F54E00;
             text-decoration: none;
-            padding: 6px 14px;
-            border: 1.5px solid var(--border);
+            padding: 5px 12px;
+            border: 1.5px solid #e5ddd0;
             border-radius: 6px;
             transition: all 0.15s;
         }
-        .links a:hover {
-            border-color: var(--accent);
-            background: var(--accent-soft);
+        .projects a:hover {
+            border-color: #F54E00;
+            background: rgba(245, 78, 0, 0.05);
         }
 
-        /* Footer */
         .footer {
             text-align: center;
-            padding: 32px;
+            padding: 28px;
             font-size: 12px;
-            color: var(--text-secondary);
+            color: #6b6354;
         }
-
-        /* Meta tag */
-        .meta-tag {
+        .mono {
             font-family: 'IBM Plex Mono', monospace;
-            font-size: 12px;
-            color: var(--text-secondary);
-            background: var(--code-bg);
+            font-size: 11px;
+            color: #6b6354;
+            background: #f3efe8;
             padding: 3px 8px;
-            border-radius: 4px;
+            border-radius: 3px;
         }
     </style>
 </head>
@@ -194,37 +188,36 @@
 
     <div class="hero">
         <h1>Brandon Queener</h1>
-        <div class="subtitle">Application for AI Product Engineer</div>
-        <div class="tagline">I build agentic AI systems in production. This page was generated by one of them.</div>
+        <div class="subtitle">AI Product Engineer Application</div>
+        <div class="tagline">This page was generated by one of my agentic AI systems.</div>
     </div>
 
     <div class="container">
-
-        <div class="section">
-            <div class="section-label">Cover Letter</div>
-            <div class="cover-letter">
-                <!DOCTYPE html><html><head></head><body><div class='paragraph'>I build agentic AI systems in production. At Coinbase, I personally built an exception triage pipeline that replaced L1 support, integrated LLM workflows that cut resolution time by 31%, and ship side projects with Claude API, n8n, and Next.js every week.</div><div class='paragraph'>What gets me excited about PostHog is you're building the infrastructure that lets product teams actually understand their AI features. Right now everyone's shipping LLM integrations but nobody knows if they're working. PostHog is solving that gap between "we added AI" and "our AI actually improves the product."</div><div class='paragraph'>My agentic pipeline at Coinbase does exactly what PostHog customers need to measure: it takes production exceptions, categorizes them with Claude, creates tickets, routes to the right engineer, and learns from the patterns. But here's the thing - we had zero visibility into whether the AI was making good decisions until we built custom dashboards. That's the problem PostHog solves at scale.</div><div class='paragraph'>I have spent time on both sides. I have been the user filing bug reports and the engineer shipping fixes same-day. My side projects speak for themselves: Daily Briefing aggregates multi-source data with Claude API, ZeroToShip is Next.js + Supabase + Claude API for rapid prototyping, and Local Roots is a Go + Next.js marketplace I built from scratch.</div><div class='paragraph'>PostHog's culture of building objectively unnecessary developer toys with dubious shareholder value is exactly why I want to work there. The best products come from engineers who can't stop building things, even when they probably should. You can see my recent experiments at brandonqueener.dev.</div><div class='signature'>Brandon Queener<br>brandonq812@gmail.com</div></body></html>
+        <div class="card">
+            <div class="card-label">Cover Letter</div>
+            <div class="cover">
+                <div class='paragraph'>I build agentic AI systems in production. At Coinbase, I personally built an exception triage pipeline that replaced L1 support, integrated LLM workflows that cut resolution time by 31%, and ship side projects with Claude API, n8n, and Next.js every week.</div><div class='paragraph'>What gets me excited about PostHog is you're building the infrastructure that lets product teams actually understand their AI features. Right now everyone's shipping LLM integrations but nobody knows if they're working. PostHog is solving that gap between "we added AI" and "our AI actually improves the product."</div><div class='paragraph'>My agentic pipeline at Coinbase does exactly what PostHog customers need to measure: it takes production exceptions, categorizes them with Claude, creates tickets, routes to the right engineer, and learns from the patterns. But here's the thing - we had zero visibility into whether the AI was making good decisions until we built custom dashboards. That's the problem PostHog solves at scale.</div><div class='paragraph'>I have spent time on both sides. I have been the user filing bug reports and the engineer shipping fixes same-day. My side projects speak for themselves: Daily Briefing aggregates multi-source data with Claude API, ZeroToShip is Next.js + Supabase + Claude API for rapid prototyping, and Local Roots is a Go + Next.js marketplace I built from scratch.</div><div class='paragraph'>PostHog's culture of building objectively unnecessary developer toys with dubious shareholder value is exactly why I want to work there. The best products come from engineers who can't stop building things, even when they probably should. You can see my recent experiments at brandonqueener.dev.</div><div class='signature'>Brandon Queener<br>brandonq812@gmail.com</div>
             </div>
         </div>
 
-        <div class="section">
-            <div class="section-label">Resume</div>
-            <div class="resume-content">
-                <!DOCTYPE html><html><head></head><body><div class='header'><div class='name'>Brandon Queener</div><div class='contact'>brandonq812@gmail.com | linkedin.com/in/brandonqueener | github.com/paretoimproved | brandonqueener.dev</div></div><div class='section'><div class='section-title'>PROFESSIONAL SUMMARY</div>Product engineer building agentic AI systems at Coinbase. Shipped production pipelines that replaced manual operations, integrated LLM workflows into enterprise products, and build 0-to-1 side projects constantly.</div><div class='section'><div class='section-title'>PROJECTS</div><div class='project-item'><strong>Daily Briefing</strong>  -  Claude API + n8n + multi-source aggregation, real-time dashboard for automated opportunity analysis</div><div class='project-item'><strong>ZeroToShip</strong>  -  Next.js + Supabase + Claude API, 0-to-1 product for rapid prototyping workflows</div><div class='project-item'><strong>Local Roots</strong>  -  Go + Next.js + Stripe Connect, full-stack marketplace connecting local producers with consumers</div></div><div class='section'><div class='section-title'>TECHNICAL SKILLS</div><div class='skills-grid'><div><div class='skill-title'>AI & Automation</div>Agentic AI workflows, Claude API, LLM integrations, n8n automation, AI-powered tooling</div><div><div class='skill-title'>Languages & Frameworks</div>Python, TypeScript/React, JavaScript, GoLang, Django, Node.js, Next.js</div><div><div class='skill-title'>Platform & Infrastructure</div>Microservices architecture, API design, Datadog observability, Docker, gRPC</div><div><div class='skill-title'>Data & Analytics</div>SQLite, Supabase, data pipelines, business intelligence, metrics-driven development</div></div></div><div class='section'><div class='section-title'>PROFESSIONAL EXPERIENCE</div><div class='experience-header'><div class='company-title'>Coinbase, Engineering Manager, Enterprise Applications & Architecture</div><div class='dates'>Oct 2024  -  Present</div></div><div class='achievement-group'><div class='group-title'>AGENTIC AI & AUTOMATION</div><ul><li>Built an agentic AI pipeline that scans production exceptions, categorizes errors, creates tickets, and routes to on-call engineers. Replaced manual monitoring completely.</li><li>Built an AI-powered Slack agent for automated access provisioning.</li><li>Integrated LLM assistant into customer service workflows: 31% reduction in resolution time, 80% AI-generated case summaries.</li></ul></div><div class='achievement-group'><div class='group-title'>PRODUCT ARCHITECTURE</div><ul><li>Designed the support portal architecture handling enterprise client workflows across 4 operational groups.</li><li>Authored technical design documents for enterprise case routing and AI integration architectures.</li></ul></div><div class='experience-header'><div class='company-title'>Coinbase, Senior Software Engineer</div><div class='dates'>Oct 2023  -  Oct 2024</div></div><div class='role-desc'>Platform engineering and architecture for institutional client systems</div><ul><li>Built complex platform solutions including custom backend logic, UI components, and system integrations for institutional client workflows.</li><li>Led technical architecture decisions for a major platform migration, establishing patterns used by the broader team.</li><li>Designed enterprise case routing systems and AI integration architectures.</li></ul><div class='experience-header'><div class='company-title'>Coinbase, Senior System Administrator</div><div class='dates'>Feb 2021  -  Oct 2023</div></div><div class='role-desc'>Enterprise platform administration during significant company growth</div><ul><li>Built custom backend logic, process automations, and integrations with internal systems supporting institutional client onboarding and compliance workflows.</li><li>Architected solutions that supported rapid scaling of the institutional business during high-growth period.</li></ul><div class='experience-header'><div class='company-title'>Simple Finance, Business Systems Analyst</div><div class='dates'>2019  -  2021</div></div><div class='role-desc'>Platform administration and business process optimization for digital banking</div><ul><li>Built workflow automations and system integrations supporting operations team for digital banking product.</li><li>Managed cross-functional requirements gathering and platform administration.</li></ul></div><div class='section'><div class='section-title'>EDUCATION</div>B.Sc. Economics, University of Oregon, 2013</div></body></html>
+        <div class="card">
+            <div class="card-label">Resume</div>
+            <div class="resume">
+                <div class='contact'>brandonq812@gmail.com | linkedin.com/in/brandonqueener | github.com/paretoimproved | brandonqueener.dev</div></div><div class='section'><div class='section-title'>PROFESSIONAL SUMMARY</div>Product engineer building agentic AI systems at Coinbase. Shipped production pipelines that replaced manual operations, integrated LLM workflows into enterprise products, and build 0-to-1 side projects constantly.</div><div class='section'><div class='section-title'>PROJECTS</div><div class='project-item'><strong>Daily Briefing</strong>  -  Claude API + n8n + multi-source aggregation, real-time dashboard for automated opportunity analysis</div><div class='project-item'><strong>ZeroToShip</strong>  -  Next.js + Supabase + Claude API, 0-to-1 product for rapid prototyping workflows</div><div class='project-item'><strong>Local Roots</strong>  -  Go + Next.js + Stripe Connect, full-stack marketplace connecting local producers with consumers</div></div><div class='section'><div class='section-title'>TECHNICAL SKILLS</div><div class='skills-grid'><div><div class='skill-title'>AI & Automation</div>Agentic AI workflows, Claude API, LLM integrations, n8n automation, AI-powered tooling</div><div><div class='skill-title'>Languages & Frameworks</div>Python, TypeScript/React, JavaScript, GoLang, Django, Node.js, Next.js</div><div><div class='skill-title'>Platform & Infrastructure</div>Microservices architecture, API design, Datadog observability, Docker, gRPC</div><div><div class='skill-title'>Data & Analytics</div>SQLite, Supabase, data pipelines, business intelligence, metrics-driven development</div></div></div><div class='section'><div class='section-title'>PROFESSIONAL EXPERIENCE</div><div class='experience-header'><div class='company-title'>Coinbase, Engineering Manager, Enterprise Applications & Architecture</div><div class='dates'>Oct 2024  -  Present</div></div><div class='achievement-group'><div class='group-title'>AGENTIC AI & AUTOMATION</div><ul><li>Built an agentic AI pipeline that scans production exceptions, categorizes errors, creates tickets, and routes to on-call engineers. Replaced manual monitoring completely.</li><li>Built an AI-powered Slack agent for automated access provisioning.</li><li>Integrated LLM assistant into customer service workflows: 31% reduction in resolution time, 80% AI-generated case summaries.</li></ul></div><div class='achievement-group'><div class='group-title'>PRODUCT ARCHITECTURE</div><ul><li>Designed the support portal architecture handling enterprise client workflows across 4 operational groups.</li><li>Authored technical design documents for enterprise case routing and AI integration architectures.</li></ul></div><div class='experience-header'><div class='company-title'>Coinbase, Senior Software Engineer</div><div class='dates'>Oct 2023  -  Oct 2024</div></div><div class='role-desc'>Platform engineering and architecture for institutional client systems</div><ul><li>Built complex platform solutions including custom backend logic, UI components, and system integrations for institutional client workflows.</li><li>Led technical architecture decisions for a major platform migration, establishing patterns used by the broader team.</li><li>Designed enterprise case routing systems and AI integration architectures.</li></ul><div class='experience-header'><div class='company-title'>Coinbase, Senior System Administrator</div><div class='dates'>Feb 2021  -  Oct 2023</div></div><div class='role-desc'>Enterprise platform administration during significant company growth</div><ul><li>Built custom backend logic, process automations, and integrations with internal systems supporting institutional client onboarding and compliance workflows.</li><li>Architected solutions that supported rapid scaling of the institutional business during high-growth period.</li></ul><div class='experience-header'><div class='company-title'>Simple Finance, Business Systems Analyst</div><div class='dates'>2019  -  2021</div></div><div class='role-desc'>Platform administration and business process optimization for digital banking</div><ul><li>Built workflow automations and system integrations supporting operations team for digital banking product.</li><li>Managed cross-functional requirements gathering and platform administration.</li></ul></div><div class='section'><div class='section-title'>EDUCATION</div>B.Sc. Economics, University of Oregon, 2013</div>
             </div>
         </div>
 
-        <div class="links">
-            <a href="https://github.com/paretoimproved/daily-briefing">Daily Briefing (Claude + n8n)</a>
-            <a href="https://github.com/paretoimproved/ZeroToShip">ZeroToShip (Next.js + Supabase)</a>
-            <a href="https://github.com/paretoimproved/local-roots">Local Roots (Go + Next.js)</a>
-            <a href="https://posthog.com/careers/ai-product-engineer">View Job Posting</a>
+        <div class="projects">
+            <a href="https://github.com/paretoimproved/daily-briefing">Daily Briefing</a>
+            <a href="https://github.com/paretoimproved/ZeroToShip">ZeroToShip</a>
+            <a href="https://github.com/paretoimproved/local-roots">Local Roots</a>
+            <a href="https://posthog.com/careers/ai-product-engineer">View Job Posting →</a>
         </div>
 
         <div class="footer">
-            <span class="meta-tag">built with claude api + python + vercel</span>
+            <span class="mono">built with claude api + python + vercel</span>
             <br><br>
-            brandonq812@gmail.com · Eugene, Oregon
+            brandonq812@gmail.com
         </div>
     </div>
 </body>
