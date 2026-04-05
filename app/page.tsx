@@ -108,12 +108,21 @@ export default function Home() {
     <main className="max-w-3xl mx-auto px-6 py-16 md:py-24">
       {/* Hero */}
       <section className="mb-20 animate-fade-in-up">
-        <p className="text-indigo-400 text-sm font-medium tracking-wider uppercase mb-4">
-          Engineering Leader
-        </p>
-        <h1 className="text-4xl md:text-5xl font-bold text-white leading-tight mb-6">
-          Brandon Queener
-        </h1>
+        <div className="flex items-start gap-8 mb-6">
+          <img
+            src="/brandon-headshot.jpg"
+            alt="Brandon Queener"
+            className="w-28 h-28 md:w-36 md:h-36 rounded-2xl object-cover flex-shrink-0 shadow-lg"
+          />
+          <div>
+            <p className="text-indigo-400 text-sm font-medium tracking-wider uppercase mb-3">
+              Engineering Leader
+            </p>
+            <h1 className="text-3xl md:text-5xl font-bold text-white leading-tight">
+              Brandon Queener
+            </h1>
+          </div>
+        </div>
         <p className="text-zinc-400 text-lg leading-relaxed max-w-2xl">
           I lead teams that build systems transforming how organizations operate.
           Engineering Manager at Coinbase, managing 9 engineers across two sub-teams
